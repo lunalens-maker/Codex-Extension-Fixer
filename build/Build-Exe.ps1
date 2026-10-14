@@ -27,7 +27,8 @@ $gui = Get-Content -LiteralPath $guiFile -Raw -Encoding UTF8
 
 # The original GUI dot-sources the core from its folder. A single-file EXE
 # has no such folder, so inline the core functions before the GUI code.
-$dotSourcePattern = "(?m)^[ \t]*\.[ \t]*\(Join-Path[ \t]+\$PSScriptRoot[ \t]+'src\\CodexFixer\.Core\.ps1'\)[ \t]*\r?\n"
+$dotSourceLine = '. (Join-Path $PSScriptRoot ''src\CodexFixer.Core.ps1'')'
+$dotSourcePattern = '(?m)^[ \t]*' + [regex]::Escape($dotSourceLine) + '[ \t]*\r?\n'
 $matches = [regex]::Matches($gui, $dotSourcePattern)
 if ($matches.Count -ne 1) {
     throw "GUI 文件的核心模块引用不符合预期（找到 $($matches.Count) 处）；拒绝生成不完整的 EXE。"
