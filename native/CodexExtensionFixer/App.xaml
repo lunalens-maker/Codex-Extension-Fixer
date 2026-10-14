@@ -3,68 +3,120 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
   <Application.Resources>
-    <SolidColorBrush x:Key="PrimaryText" Color="#F6F8FF"/>
-    <SolidColorBrush x:Key="SecondaryText" Color="#9BAAC7"/>
-    <SolidColorBrush x:Key="SoftBorder" Color="#44DCEBFF"/>
+    <SolidColorBrush x:Key="PrimaryText" Color="#F8FAFF"/>
+    <SolidColorBrush x:Key="SecondaryText" Color="#AFBFDD"/>
+
+    <!-- Translucent layered glass with a spectral top-edge highlight. -->
     <Style x:Key="GlassCard" TargetType="Border">
       <Setter Property="Background">
         <Setter.Value>
           <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#4C667EAC" Offset="0"/>
-            <GradientStop Color="#28404C73" Offset="0.55"/>
-            <GradientStop Color="#28303C63" Offset="1"/>
+            <GradientStop Color="#6C748BBC" Offset="0"/>
+            <GradientStop Color="#42476189" Offset="0.25"/>
+            <GradientStop Color="#2E334564" Offset="0.72"/>
+            <GradientStop Color="#4B57779C" Offset="1"/>
           </LinearGradientBrush>
         </Setter.Value>
       </Setter>
       <Setter Property="BorderBrush">
         <Setter.Value>
           <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#90E1EFFF" Offset="0"/>
-            <GradientStop Color="#22CEE8FF" Offset="0.42"/>
-            <GradientStop Color="#3589B0E0" Offset="1"/>
+            <GradientStop Color="#C5F0FAFF" Offset="0"/>
+            <GradientStop Color="#85C5E7FF" Offset="0.24"/>
+            <GradientStop Color="#2877A4C2" Offset="0.66"/>
+            <GradientStop Color="#78BDE8FF" Offset="1"/>
           </LinearGradientBrush>
         </Setter.Value>
       </Setter>
-      <Setter Property="BorderThickness" Value="1"/>
-      <Setter Property="CornerRadius" Value="24"/>
+      <Setter Property="BorderThickness" Value="1.15"/>
+      <Setter Property="CornerRadius" Value="28"/>
       <Setter Property="Padding" Value="23"/>
       <Setter Property="Effect">
         <Setter.Value>
-          <DropShadowEffect Color="#060F2D" BlurRadius="22" ShadowDepth="7" Opacity="0.32"/>
+          <DropShadowEffect Color="#020B1C" BlurRadius="32" ShadowDepth="11" Opacity=".42"/>
         </Setter.Value>
       </Setter>
     </Style>
+
     <Style x:Key="GlassButton" TargetType="Button">
-      <Setter Property="Foreground" Value="#EFF5FF"/>
-      <Setter Property="Background" Value="#354B6E96"/>
-      <Setter Property="BorderBrush" Value="#65BCD9FA"/>
+      <Setter Property="Foreground" Value="#F7FAFF"/>
+      <Setter Property="Background" Value="#46566F95"/>
+      <Setter Property="BorderBrush" Value="#82CDE9FF"/>
       <Setter Property="BorderThickness" Value="1"/>
       <Setter Property="Padding" Value="18,12"/>
       <Setter Property="FontSize" Value="13"/>
       <Setter Property="FontWeight" Value="SemiBold"/>
       <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="FocusVisualStyle">
+        <Setter.Value>
+          <Style TargetType="Control">
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate>
+                  <Border BorderBrush="#E1F0FF" BorderThickness="2" CornerRadius="16"
+                          Margin="-4"/>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </Setter.Value>
+      </Setter>
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="Button">
-            <Border x:Name="ButtonShell" CornerRadius="14"
+            <Border x:Name="ButtonShell" CornerRadius="15" SnapsToDevicePixels="True"
                     Background="{TemplateBinding Background}"
                     BorderBrush="{TemplateBinding BorderBrush}"
-                    BorderThickness="{TemplateBinding BorderThickness}">
-              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
-                                Margin="{TemplateBinding Padding}"/>
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    RenderTransformOrigin=".5,.5">
+              <Border.RenderTransform>
+                <ScaleTransform x:Name="ButtonScale" ScaleX="1" ScaleY="1"/>
+              </Border.RenderTransform>
+              <Grid>
+                <Border CornerRadius="14" Height="1" VerticalAlignment="Top"
+                        Margin="12,1,12,0" IsHitTestVisible="False"
+                        Background="#65FFFFFF"/>
+                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                  Margin="{TemplateBinding Padding}"/>
+              </Grid>
             </Border>
             <ControlTemplate.Triggers>
               <Trigger Property="IsMouseOver" Value="True">
-                <Setter TargetName="ButtonShell" Property="Background" Value="#6679A5D5"/>
-                <Setter TargetName="ButtonShell" Property="BorderBrush" Value="#B3E8F5FF"/>
+                <Setter TargetName="ButtonShell" Property="Background" Value="#6979A2C8"/>
+                <Setter TargetName="ButtonShell" Property="BorderBrush" Value="#CEEAF7FF"/>
               </Trigger>
               <Trigger Property="IsPressed" Value="True">
-                <Setter TargetName="ButtonShell" Property="Opacity" Value="0.73"/>
+                <Setter TargetName="ButtonShell" Property="Background" Value="#466187AA"/>
+                <Setter TargetName="ButtonShell" Property="Opacity" Value=".87"/>
               </Trigger>
               <Trigger Property="IsEnabled" Value="False">
-                <Setter TargetName="ButtonShell" Property="Opacity" Value="0.35"/>
+                <Setter TargetName="ButtonShell" Property="Opacity" Value=".34"/>
                 <Setter Property="Cursor" Value="Arrow"/>
               </Trigger>
+              <EventTrigger RoutedEvent="MouseEnter">
+                <BeginStoryboard>
+                  <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="ButtonScale"
+                                     Storyboard.TargetProperty="ScaleX"
+                                     To="1.015" Duration="0:0:0.18"/>
+                    <DoubleAnimation Storyboard.TargetName="ButtonScale"
+                                     Storyboard.TargetProperty="ScaleY"
+                                     To="1.015" Duration="0:0:0.18"/>
+                  </Storyboard>
+                </BeginStoryboard>
+              </EventTrigger>
+              <EventTrigger RoutedEvent="MouseLeave">
+                <BeginStoryboard>
+                  <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="ButtonScale"
+                                     Storyboard.TargetProperty="ScaleX"
+                                     To="1" Duration="0:0:0.18"/>
+                    <DoubleAnimation Storyboard.TargetName="ButtonScale"
+                                     Storyboard.TargetProperty="ScaleY"
+                                     To="1" Duration="0:0:0.18"/>
+                  </Storyboard>
+                </BeginStoryboard>
+              </EventTrigger>
             </ControlTemplate.Triggers>
           </ControlTemplate>
         </Setter.Value>
