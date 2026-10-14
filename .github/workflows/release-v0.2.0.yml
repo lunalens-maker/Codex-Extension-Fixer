@@ -1,0 +1,68 @@
+name: Publish v0.2.0 Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/release-v0.2.0.yml
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: publish-v0.2.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@v5
+
+      - name: Download verified Windows EXE build
+        uses: actions/download-artifact@v4
+        with:
+          name: Codex-Extension-Fixer-Windows-x64
+          run-id: 38561524547
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path: dist
+
+      - name: Confirm EXE identity and write SHA-256 file
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s dist/Codex-Extension-Fixer.exe
+          expected='2ba5894ca118c7ff20f9ef8905435c80b7b4d02e11fd875ebe0ebf227f3a1464'
+          actual="$(sha256sum dist/Codex-Extension-Fixer.exe | awk '{print $1}')"
+          if [[ "$actual" != "$expected" ]]; then
+            echo "::error::Executable checksum does not match the tested build"
+            exit 1
+          fi
+          printf '%s  %s\n' "$actual" 'Codex-Extension-Fixer.exe' > dist/Codex-Extension-Fixer.exe.sha256
+          test -s docs/release-notes-v0.2.0.md
+          echo "Verified: $actual"
+
+      - name: Publish GitHub Release v0.2.0
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          if gh release view v0.2.0 >/dev/null 2>&1; then
+            echo "Release v0.2.0 already exists; leaving it unchanged."
+            gh release view v0.2.0 --json url -q .url
+            exit 0
+          fi
+          gh release create v0.2.0 \
+            dist/Codex-Extension-Fixer.exe \
+            dist/Codex-Extension-Fixer.exe.sha256 \
+            --target "$GITHUB_SHA" \
+            --title 'Codex Extension Fixer v0.2.0' \
+            --notes-file docs/release-notes-v0.2.0.md \
+            --latest
+          gh release view v0.2.0 --json url -q .url
