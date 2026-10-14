@@ -1,4 +1,4 @@
-# LunaLens Codex Fixer 🛠️
+# Codex Extension Fixer 🛠️
 
 **一款适用于 Windows 的开源小工具，用来检查和修复 Codex 桌面版更新后，Chrome 中 ChatGPT/Codex 扩展无法启动的失效路径。**
 
@@ -61,7 +61,7 @@ powershell.exe -NoProfile -File .\Fix-Codex.ps1 -Action Restore -Yes
 | `%LOCALAPPDATA%\OpenAI\Codex\chrome-native-hosts-v2.json` | Codex AppData 里的扩展清单 |
 | `%USERPROFILE%\.codex\chrome-native-hosts-v2.json` | 用户目录里的扩展清单 |
 
-需要修复时会在 **`%LOCALAPPDATA%\LunaLens\CodexFixer\Backups`** 备份原始完整文件，并记录 SHA-256 校验。不会直接删除 `.codex` 目录、历史对话、登录数据、插件或 MCP 设置。
+需要修复时会在 **`%LOCALAPPDATA%\Codex-Extension-Fixer\Backups`** 备份原始完整文件，并记录 SHA-256 校验。不会直接删除 `.codex` 目录、历史对话、登录数据、插件或 MCP 设置。
 
 修复是**根据当前可用版本重写失效引用**，不创建 Windows 定时任务，不后台常驻，也不更改 TUN/Clash 代理模式。
 
@@ -80,12 +80,13 @@ powershell.exe -NoProfile -File .\Fix-Codex.ps1 -Action Restore -Yes
 目录结构：
 
 ```text
-LunaLens-Codex-Fixer/
+Codex-Extension-Fixer/
 ├── Start.cmd                       # Windows 双击启动
-├── LunaLens-Codex-Fixer.ps1         # WinForms 图形界面
+├── Codex-Fixer.ps1                   # WinForms 图形界面
 ├── Fix-Codex.ps1                   # 命令行
 ├── src/CodexFixer.Core.ps1         # 检测、备份、修复、恢复逻辑
 ├── tests/Run-Tests.ps1             # 使用临时模拟环境的离线测试
+├── .gitignore                      # Git 忽略规则
 └── .github/workflows/ci.yml       # Windows CI
 ```
 
@@ -104,7 +105,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\Run-Tests.ps1
 ### 网页上传（不需要安装 Git）
 
 1. 登录 GitHub，点击右上角 `+` → **New repository**。
-2. 推荐仓库名：`LunaLens-Codex-Fixer`，公开或私有均可；不用勾选自动创建 README / License，因为项目已经带了。
+2. 推荐仓库名：`Codex-Extension-Fixer`，公开或私有均可；不用勾选自动创建 README / License，因为项目已经带了。
 3. 创建仓库后，在仓库页面选择 **uploading an existing file**，**上传解压后的项目文件与目录**（不要只上传 ZIP），提交即可。
 4. 可在 **Actions** 页面查看 Windows 测试。首次发布前最好在自己的 Windows 电脑执行一次 `tests/Run-Tests.ps1`。
 
@@ -113,9 +114,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\Run-Tests.ps1
 ```powershell
 git init
 git add .
-git commit -m "feat: initial LunaLens Codex Fixer"
+git commit -m "feat: initial Codex Extension Fixer"
 git branch -M main
-git remote add origin https://github.com/<YOUR_USERNAME>/LunaLens-Codex-Fixer.git
+git remote add origin https://github.com/<YOUR_USERNAME>/Codex-Extension-Fixer.git
 git push -u origin main
 ```
 
@@ -124,5 +125,3 @@ git push -u origin main
 ## 开源协议
 
 [MIT License](LICENSE)。欢迎通过 Issue 反馈新的清单结构和错误信息（发布前请删除个人目录、令牌等隐私信息）。
-
-> **LunaLens** — make small fixes simple.
