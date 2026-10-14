@@ -7,7 +7,7 @@ function Assert-LL([bool]$Condition, [string]$Message) {
     Write-Host "PASS: $Message" -ForegroundColor Green
 }
 
-$root = Join-Path ([System.IO.Path]::GetTempPath()) ('LunaLensCodexFixerTest-' + [guid]::NewGuid().ToString('N'))
+$root = Join-Path ([System.IO.Path]::GetTempPath()) ('CodexExtensionFixerTest-' + [guid]::NewGuid().ToString('N'))
 try {
     $runtimeRoot = Join-Path $root 'OpenAI\Codex\runtimes\cua_node'
     $goodBin = Join-Path $runtimeRoot 'a9ba6825a525118c\bin'
