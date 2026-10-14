@@ -40,7 +40,9 @@ $OutputDir = [System.IO.Path]::GetFullPath($ExecutionContext.SessionState.Path.G
 $null = New-Item -ItemType Directory -Path $OutputDir -Force
 $inputFile = Join-Path $OutputDir 'Codex-Extension-Fixer.build-input.ps1'
 $outputFile = Join-Path $OutputDir 'Codex-Extension-Fixer.exe'
-$utf8 = New-Object System.Text.UTF8Encoding($false)
+# UTF-8 BOM is required here: Windows PowerShell 5.1's ParseFile defaults
+# to the system ANSI codepage when the merged .ps1 file has no BOM.
+$utf8 = New-Object System.Text.UTF8Encoding($true)
 
 try {
     [System.IO.File]::WriteAllText($inputFile, $combined, $utf8)
