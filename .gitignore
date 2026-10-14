@@ -15,3 +15,6 @@ backup-info.json
 .idea/
 .DS_Store
 Thumbs.db
+
+# Generated executable and temporary combined PowerShell source
+dist/
