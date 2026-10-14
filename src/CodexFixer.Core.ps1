@@ -189,7 +189,7 @@ function Write-LLJson {
     try {
         [System.IO.File]::WriteAllText($temp, $json, $enc)
         # All files being patched must already exist: File.Replace provides atomic replacement.
-        [System.IO.File]::Replace($temp, $Path, $null)
+        [System.IO.File]::Replace($temp, $Path, [NullString]::Value)
     } finally {
         if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Force -ErrorAction SilentlyContinue }
     }
@@ -247,7 +247,7 @@ function Invoke-LLRepair {
                 if ((Get-LLFileHash -Path $rec.SourcePath) -eq $rec.AfterHash) {
                     $tmp = "$($rec.SourcePath).restore-$([guid]::NewGuid().ToString('N'))"
                     Copy-Item -LiteralPath (Join-Path $folder $rec.BackupFile) -Destination $tmp -ErrorAction Stop
-                    [System.IO.File]::Replace($tmp, $rec.SourcePath, $null)
+                    [System.IO.File]::Replace($tmp, $rec.SourcePath, [NullString]::Value)
                 }
             } catch { Write-Warning "自动回滚失败，请使用备份目录：$folder" }
         }
@@ -303,7 +303,7 @@ function Invoke-LLRestore {
         $tmp = "$($rec.SourcePath).restore-$([guid]::NewGuid().ToString('N'))"
         try {
             Copy-Item -LiteralPath (Join-Path $selected.Folder $rec.BackupFile) -Destination $tmp -ErrorAction Stop
-            [System.IO.File]::Replace($tmp, $rec.SourcePath, $null)
+            [System.IO.File]::Replace($tmp, $rec.SourcePath, [NullString]::Value)
         } finally {
             if (Test-Path -LiteralPath $tmp) { Remove-Item -LiteralPath $tmp -Force -ErrorAction SilentlyContinue }
         }
