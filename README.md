@@ -25,6 +25,19 @@ Codex app-server manifest entry is missing required path nodePath
 - 📴 **离线工具**：无需管理员权限、无需安装 Python/Node/npm、不访问网络，也不上传任何文件。
 - 🧪 **自动化测试**：包含离线模拟安装环境测试和 GitHub Actions 工作流。
 
+## 下载 Windows EXE（自动构建预览版）
+
+GitHub Actions 在 `main` 每次更新后自动在 Windows 上执行离线测试，并使用 [PS2EXE](https://github.com/MScholtes/PS2EXE) 1.0.18 构建 `Codex-Extension-Fixer.exe`。
+
+1. 打开仓库的 [Actions → Build Windows EXE](https://github.com/lunalens-maker/Codex-Extension-Fixer/actions/workflows/build-exe.yml)。
+2. 选择最近一条 **成功（绿色对勾）** 的运行记录。
+3. 在页面底部 **Artifacts** 下载 `Codex-Extension-Fixer-Windows-x64`（GitHub 可能要求登录）。
+4. 解压下载的 ZIP，双击其中的 `Codex-Extension-Fixer.exe`，先点击「检测问题」。真正修复前须退出 Codex 和 Chrome 并确认备份。
+
+**重要：** GitHub Actions 的构建成功只表示自动测试通过、EXE 成功生成并通过基础文件格式校验，**不等于已在真实 Codex 环境完成 EXE 端到端验证**。当前请视为预览构建，验证通过后再发布正式 Release。EXE 不需要随身携带项目 `.ps1` 文件，但仍依赖 Windows 自带的 .NET Framework 和 Windows PowerShell 运行组件，并非机器码重写；未签名的下载文件可能触发 SmartScreen。
+
+**来源说明：** 编译所用 PS2EXE 可从 PowerShell Gallery 安装，版本锁定 1.0.18。构建时会从网络获取该编译工具，产出的修复工具**自身不联网，也不会上传你的配置**。
+
 ## 快速使用（Windows 11 / Windows 10）
 
 1. 从 GitHub 仓库右上角 **Code → Download ZIP** 获取源码，并解压整个文件夹。不要只下载一个 `.ps1` 文件。
@@ -81,13 +94,15 @@ powershell.exe -NoProfile -File .\Fix-Codex.ps1 -Action Restore -Yes
 
 ```text
 Codex-Extension-Fixer/
-├── Start.cmd                       # Windows 双击启动
+├── Start.cmd                       # PowerShell 版本双击启动
 ├── Codex-Fixer.ps1                   # WinForms 图形界面
 ├── Fix-Codex.ps1                   # 命令行
 ├── src/CodexFixer.Core.ps1         # 检测、备份、修复、恢复逻辑
 ├── tests/Run-Tests.ps1             # 使用临时模拟环境的离线测试
+├── build/Build-Exe.ps1             # 合并源码并生成单文件 EXE
 ├── .gitignore                      # Git 忽略规则
-└── .github/workflows/ci.yml       # Windows CI
+├── .github/workflows/ci.yml       # Windows 核心测试
+└── .github/workflows/build-exe.yml # EXE 自动构建
 ```
 
 在 Windows PowerShell 中运行：
@@ -97,6 +112,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\Run-Tests.ps1
 ```
 
 测试只使用系统临时目录，不触碰真实 Codex 安装。
+
+要在 Windows 本地构建 EXE（需要网络获取编译依赖）：
+
+```powershell
+Install-Module -Name ps2exe -RequiredVersion 1.0.18 -Scope CurrentUser -Force
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\build\Build-Exe.ps1
+```
+
+生成文件位于 `dist/Codex-Extension-Fixer.exe`；不要把编译输出目录提交到仓库。
 
 ## 发布到 GitHub
 
