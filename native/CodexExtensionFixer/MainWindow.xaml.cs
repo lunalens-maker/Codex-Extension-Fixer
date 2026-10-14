@@ -18,6 +18,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         SourceInitialized += (_, _) => TryEnableWindowsBackdrop();
         Loaded += async (_, _) => await ScanAsync();
+        StateChanged += (_, _) => MaximizeButton.Content = WindowState == WindowState.Maximized ? "❐" : "□";
     }
 
     [DllImport("dwmapi.dll", PreserveSig = true)]
@@ -49,6 +50,8 @@ public partial class MainWindow : Window
     }
 
     private void Minimize_Click(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
+    private void Maximize_Click(object sender, RoutedEventArgs e) =>
+        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
     private void Close_Click(object sender, RoutedEventArgs e) => Close();
 
     private void SetBusy(bool value)
@@ -121,6 +124,8 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
+            currentReport = null;
+            fixer = null;
             StatusText.Text = "检测失败";
             StatusDot.Fill = Brushes.OrangeRed;
             DiagnosticsList.ItemsSource = new[] { "检测过程中发生错误：" + ex.Message };
