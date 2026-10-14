@@ -19,7 +19,7 @@ $guiFile  = Join-Path $repoRoot 'Codex-Fixer.ps1'
 
 Import-Module -Name ps2exe -RequiredVersion '1.0.18' -ErrorAction Stop
 foreach ($path in @($coreFile, $guiFile)) {
-    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "缺少源码：$path" }
+    if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Missing source file: $path" }
 }
 
 $core = Get-Content -LiteralPath $coreFile -Raw -Encoding UTF8
@@ -31,7 +31,7 @@ $dotSourceLine = '. (Join-Path $PSScriptRoot ''src\CodexFixer.Core.ps1'')'
 $dotSourcePattern = '(?m)^[ \t]*' + [regex]::Escape($dotSourceLine) + '[ \t]*\r?\n'
 $matches = [regex]::Matches($gui, $dotSourcePattern)
 if ($matches.Count -ne 1) {
-    throw "GUI 文件的核心模块引用不符合预期（找到 $($matches.Count) 处）；拒绝生成不完整的 EXE。"
+    throw "Expected exactly one GUI core import, found $($matches.Count). Aborting."
 }
 $gui = [regex]::Replace($gui, $dotSourcePattern, '')
 $combined = $core.TrimStart([char]0xFEFF) + "`r`n" + $gui.TrimStart([char]0xFEFF)
@@ -48,7 +48,7 @@ try {
     $parseErrors = $null
     $null = [System.Management.Automation.Language.Parser]::ParseFile($inputFile, [ref]$parseTokens, [ref]$parseErrors)
     if (@($parseErrors).Count -gt 0) {
-        throw "合并脚本存在 PowerShell 语法错误：$($parseErrors[0].Message)"
+        throw "Combined script syntax error: $($parseErrors[0].Message)"
     }
 
     Invoke-ps2exe -inputFile $inputFile -outputFile $outputFile `
@@ -59,11 +59,11 @@ try {
         -version $Version
 
     if (-not (Test-Path -LiteralPath $outputFile -PathType Leaf)) {
-        throw 'PS2EXE 未生成可执行文件。'
+        throw 'PS2EXE did not generate an executable.'
     }
     $bytes = [System.IO.File]::ReadAllBytes($outputFile)
     if ($bytes.Length -lt 4096 -or $bytes[0] -ne 0x4D -or $bytes[1] -ne 0x5A) {
-        throw '构建结果缺少 Windows PE 文件头。'
+        throw 'Build output is not a Windows PE executable.'
     }
     Write-Host "Built: $outputFile"
     Get-FileHash -LiteralPath $outputFile -Algorithm SHA256 | Format-List
