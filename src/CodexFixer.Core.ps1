@@ -1,4 +1,4 @@
-﻿# Copyright (c) 2026 LunaLens contributors. MIT License.
+﻿# Copyright (c) 2026 Codex Extension Fixer contributors. MIT License.
 # Windows PowerShell 5.1+; intentionally avoids downloading tools or modifying Codex user data.
 
 function Get-LLContext {
@@ -13,7 +13,7 @@ function Get-LLContext {
         CodexVersion = [string]$pkg.Version
         RuntimeRoot  = Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\runtimes\cua_node'
         ResourcesPath = $resources
-        BackupRoot   = Join-Path $env:LOCALAPPDATA 'LunaLens\CodexFixer\Backups'
+        BackupRoot   = Join-Path $env:LOCALAPPDATA 'Codex-Extension-Fixer\Backups'
         Manifests    = @(
             [pscustomobject]@{ Id = 'appdata'; Name = 'AppData 清单'; Path = Join-Path $env:LOCALAPPDATA 'OpenAI\Codex\chrome-native-hosts-v2.json' }
             [pscustomobject]@{ Id = 'profile'; Name = '.codex 清单'; Path = Join-Path $env:USERPROFILE '.codex\chrome-native-hosts-v2.json' }
@@ -225,7 +225,7 @@ function Invoke-LLRepair {
             BeforeHash = $part.OriginalHash; AfterHash = $null; Modified = $false
         }
     }
-    $meta = [pscustomobject]@{ Tool = 'LunaLens Codex Fixer'; Schema = 1; CreatedAt = (Get-Date).ToString('o'); Status = 'Pending'; Files = $entries }
+    $meta = [pscustomobject]@{ Tool = 'Codex Extension Fixer'; Schema = 1; CreatedAt = (Get-Date).ToString('o'); Status = 'Pending'; Files = $entries }
     Save-LLMetadata -Folder $folder -Data $meta
     try {
         foreach ($part in $toPatch) {
@@ -267,7 +267,7 @@ function Get-LLBackups {
         if (-not (Test-Path -LiteralPath $file -PathType Leaf)) { continue }
         try {
             $meta = Get-Content -LiteralPath $file -Raw -Encoding UTF8 | ConvertFrom-Json
-            if ($meta.Tool -eq 'LunaLens Codex Fixer' -and $meta.Schema -eq 1 -and $meta.Status -eq 'Complete') {
+            if ($meta.Tool -eq 'Codex Extension Fixer' -and $meta.Schema -eq 1 -and $meta.Status -eq 'Complete') {
                 $all += [pscustomobject]@{ Folder = $dir.FullName; Info = $meta }
             }
         } catch { continue }
