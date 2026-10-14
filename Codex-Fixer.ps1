@@ -1,4 +1,4 @@
-﻿# LunaLens Codex Fixer — graphical interface (Windows PowerShell 5.1+)
+﻿# Codex Extension Fixer — graphical interface (Windows PowerShell 5.1+)
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'src\CodexFixer.Core.ps1')
 Add-Type -AssemblyName System.Windows.Forms
@@ -6,7 +6,7 @@ Add-Type -AssemblyName System.Drawing
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 $form = New-Object System.Windows.Forms.Form
-$form.Text = 'LunaLens Codex Fixer  |  浏览器扩展修复工具'
+$form.Text = 'Codex Extension Fixer  |  浏览器扩展修复工具'
 $form.Width = 810
 $form.Height = 590
 $form.MinimumSize = New-Object System.Drawing.Size(760, 550)
@@ -16,7 +16,7 @@ $form.ForeColor = [System.Drawing.Color]::White
 $form.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 10)
 
 $title = New-Object System.Windows.Forms.Label
-$title.Text = 'LunaLens  Codex Fixer'
+$title.Text = 'Codex Extension Fixer'
 $title.Font = New-Object System.Drawing.Font('Microsoft YaHei UI', 19, [System.Drawing.FontStyle]::Bold)
 $title.ForeColor = [System.Drawing.Color]::FromArgb(234, 240, 255)
 $title.SetBounds(28, 22, 710, 44)
