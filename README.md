@@ -25,18 +25,23 @@ Codex app-server manifest entry is missing required path nodePath
 - 📴 **离线工具**：无需管理员权限、无需安装 Python/Node/npm、不访问网络，也不上传任何文件。
 - 🧪 **自动化测试**：包含离线模拟安装环境测试和 GitHub Actions 工作流。
 
-## 下载 Windows EXE（自动构建预览版）
+## 下载 Windows EXE（v0.2.0 正式发布）
 
-GitHub Actions 在 `main` 每次更新后自动在 Windows 上执行离线测试，并使用 [PS2EXE](https://github.com/MScholtes/PS2EXE) 1.0.18 构建 `Codex-Extension-Fixer.exe`。
+**[⬇️ 下载 Codex-Extension-Fixer.exe](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/download/v0.2.0/Codex-Extension-Fixer.exe)** · [完整 Release 说明](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/tag/v0.2.0) · [SHA-256 校验文件](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/download/v0.2.0/Codex-Extension-Fixer.exe.sha256)
 
-1. 打开仓库的 [Actions → Build Windows EXE](https://github.com/lunalens-maker/Codex-Extension-Fixer/actions/workflows/build-exe.yml)。
-2. 选择最近一条 **成功（绿色对勾）** 的运行记录。
-3. 在页面底部 **Artifacts** 下载 `Codex-Extension-Fixer-Windows-x64`（GitHub 可能要求登录）。
-4. 解压下载的 ZIP，双击其中的 `Codex-Extension-Fixer.exe`，先点击「检测问题」。真正修复前须退出 Codex 和 Chrome 并确认备份。
+下载后双击 `Codex-Extension-Fixer.exe`，先点击「检测问题」。只有确实发现失效路径时，才需要退出 Chrome 与 Codex 并确认备份后点击「备份并修复」。
 
-**重要：** GitHub Actions 的构建成功只表示自动测试通过、EXE 成功生成并通过基础文件格式校验，**不等于已在真实 Codex 环境完成 EXE 端到端验证**。当前请视为预览构建，验证通过后再发布正式 Release。EXE 不需要随身携带项目 `.ps1` 文件，但仍依赖 Windows 自带的 .NET Framework 和 Windows PowerShell 运行组件，并非机器码重写；未签名的下载文件可能触发 SmartScreen。
+本版 EXE 沿用 GitHub Actions 中**已实机验证能正常打开及只读扫描**的构建产物，SHA-256：
 
-**来源说明：** 编译所用 PS2EXE 可从 PowerShell Gallery 安装，版本锁定 1.0.18。构建时会从网络获取该编译工具，产出的修复工具**自身不联网，也不会上传你的配置**。
+```text
+2BA5894CA118C7FF20F9EF8905435C80B7B4D02E11FD875EBE0EBF227F3A1464
+```
+
+**测试范围：** Windows 图形界面启动、运行时识别及只读扫描已通过实机验证；修复与恢复功能通过隔离的自动化模拟测试，但尚未完成真实受损安装的 EXE 修复/恢复端到端测试。EXE 依赖 Windows 自带的 PowerShell/.NET 运行组件；它没有代码签名，因此可能出现 SmartScreen「未知发布者」警告。请确认下载来源并校验文件哈希后再运行。
+
+### 开发者自动构建
+
+`main` 分支推送后，GitHub Actions 会运行测试，并用 [PS2EXE](https://github.com/MScholtes/PS2EXE) 1.0.18 编译。开发预览版可在 [Build Windows EXE Actions](https://github.com/lunalens-maker/Codex-Extension-Fixer/actions/workflows/build-exe.yml) 的 Artifacts 下载；正式用户推荐使用上方 Release 附件。编译过程会安装 PS2EXE，生成的修复工具自身不联网或上传配置。
 
 ## 快速使用（Windows 11 / Windows 10）
 
