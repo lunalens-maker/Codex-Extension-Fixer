@@ -36,9 +36,9 @@ public sealed class BackupInfo
     public int Schema { get; set; } = 1;
     public string CreatedAt { get; set; } = DateTimeOffset.Now.ToString("O");
     public string Status { get; set; } = "Pending";
-    public List<BackupFile> Files { get; set; } = [];
+    public List<BackupEntry> Files { get; set; } = [];
 }
-public sealed class BackupFile
+public sealed class BackupEntry
 {
     public string FileId { get; set; } = "";
     public string SourcePath { get; set; } = "";
@@ -296,7 +296,7 @@ public sealed class FixerService
         {
             string file = part.Id + ".json";
             File.Copy(part.Path, Path.Combine(folder, file));
-            info.Files.Add(new BackupFile { FileId = part.Id, SourcePath = part.Path,
+            info.Files.Add(new BackupEntry { FileId = part.Id, SourcePath = part.Path,
                 BackupFile = file, BeforeHash = part.BeforeHash });
         }
         WriteMetadata(folder, info);
