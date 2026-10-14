@@ -1,0 +1,55 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Run isolated PowerShell 5.1 tests
+        shell: powershell
+        run: |
+          & .\tests\Run-Tests.ps1
+
+      - name: Install pinned PS2EXE compiler
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Install-Module -Name ps2exe -RequiredVersion '1.0.18' -Scope CurrentUser -Repository PSGallery -Force -AllowClobber -ErrorAction Stop
+          Import-Module ps2exe -RequiredVersion '1.0.18' -ErrorAction Stop
+
+      - name: Compile single-file GUI EXE
+        shell: powershell
+        run: |
+          & .\build\Build-Exe.ps1 -Version '0.2.0.0'
+
+      - name: Verify EXE metadata and hash
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $path = Join-Path $PWD 'dist\Codex-Extension-Fixer.exe'
+          if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw 'Build output missing' }
+          $data = [IO.File]::ReadAllBytes($path)
+          if ($data.Length -lt 4096 -or $data[0] -ne 0x4D -or $data[1] -ne 0x5A) { throw 'Invalid Windows EXE' }
+          $info = (Get-Item -LiteralPath $path).VersionInfo
+          Write-Host "Product: $($info.ProductName); Version: $($info.ProductVersion)"
+          if ($info.ProductName -ne 'Codex Extension Fixer') { throw 'EXE product name mismatch' }
+          Get-FileHash -LiteralPath $path -Algorithm SHA256 | Format-List
+
+      - name: Upload executable artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Codex-Extension-Fixer-Windows-x64
+          path: dist/Codex-Extension-Fixer.exe
+          if-no-files-found: error
+          retention-days: 30
