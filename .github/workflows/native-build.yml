@@ -28,7 +28,7 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Build native Windows app
         shell: pwsh
-        run: dotnet build native/CodexExtensionFixer/CodexExtensionFixer.csproj --configuration Release --no-restore:false
+        run: dotnet build native/CodexExtensionFixer/CodexExtensionFixer.csproj --configuration Release
       - name: Verify safe repair engine
         shell: pwsh
         run: dotnet run --project tests/NativeTests/NativeTests.csproj --configuration Release
