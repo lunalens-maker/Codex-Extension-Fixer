@@ -1,0 +1,225 @@
+<Window x:Class="CodexExtensionFixer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        Title="Codex Extension Fixer" Width="1050" Height="740"
+        MinWidth="880" MinHeight="680"
+        WindowStyle="None" ResizeMode="CanResize"
+        Background="#101728" Foreground="{StaticResource PrimaryText}"
+        UseLayoutRounding="True" SnapsToDevicePixels="True"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" FontSize="14">
+  <shell:WindowChrome.WindowChrome>
+    <shell:WindowChrome CaptionHeight="0" CornerRadius="0"
+                        ResizeBorderThickness="7" GlassFrameThickness="0"
+                        UseAeroCaptionButtons="False"/>
+  </shell:WindowChrome.WindowChrome>
+  <Grid>
+    <!-- Subtle, blurred ambient color blooms provide a refractive glass effect
+         without introducing a dependency on browser-rendered UI. -->
+    <Grid.Background>
+      <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#090F1F" Offset="0"/>
+        <GradientStop Color="#26345B" Offset="0.42"/>
+        <GradientStop Color="#10172D" Offset="0.77"/>
+        <GradientStop Color="#080D1C" Offset="1"/>
+      </LinearGradientBrush>
+    </Grid.Background>
+    <!-- High-contrast ambient lights behind the semi-transparent panes. -->
+    <Canvas IsHitTestVisible="False" ClipToBounds="True">
+      <Ellipse x:Name="AuroraViolet" Width="680" Height="390" Canvas.Left="-150" Canvas.Top="-155"
+               Opacity=".85" Fill="#8D659BFF">
+        <Ellipse.Effect><BlurEffect Radius="115"/></Ellipse.Effect>
+      </Ellipse>
+      <Ellipse Width="500" Height="460" Canvas.Right="-165" Canvas.Top="115"
+               Opacity=".82" Fill="#5A6FD9F5">
+        <Ellipse.Effect><BlurEffect Radius="125"/></Ellipse.Effect>
+      </Ellipse>
+      <Ellipse Width="520" Height="310" Canvas.Left="245" Canvas.Bottom="-186"
+               Opacity=".67" Fill="#467BB8FF">
+        <Ellipse.Effect><BlurEffect Radius="95"/></Ellipse.Effect>
+      </Ellipse>
+      <Ellipse Width="240" Height="250" Canvas.Left="420" Canvas.Top="110"
+               Opacity=".36" Fill="#7793B8FF">
+        <Ellipse.Effect><BlurEffect Radius="87"/></Ellipse.Effect>
+      </Ellipse>
+      <Ellipse Width="780" Height="505" Canvas.Left="-290" Canvas.Top="-210"
+               Stroke="#22EDFAFF" StrokeThickness="2"/>
+      <Ellipse Width="720" Height="430" Canvas.Right="-360" Canvas.Bottom="-220"
+               Stroke="#1A9EDCFF" StrokeThickness="1"/>
+      <Canvas.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+          <BeginStoryboard>
+            <Storyboard AutoReverse="True" RepeatBehavior="Forever">
+              <DoubleAnimation Storyboard.TargetName="AuroraViolet"
+                               Storyboard.TargetProperty="Opacity" From=".75" To=".98"
+                               Duration="0:0:7"/>
+            </Storyboard>
+          </BeginStoryboard>
+        </EventTrigger>
+      </Canvas.Triggers>
+    </Canvas>
+
+    <Grid Margin="32,14,32,22">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="46"/>
+        <RowDefinition Height="132"/>
+        <RowDefinition Height="146"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="55"/>
+      </Grid.RowDefinitions>
+
+      <!-- Custom caption and window controls -->
+      <Grid Grid.Row="0" MouseLeftButtonDown="Caption_MouseLeftButtonDown" Background="Transparent">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Border CornerRadius="11" Width="30" Height="30" Background="#7C86B9F8"
+                  BorderBrush="#88C7E3FF" BorderThickness="1">
+            <TextBlock Text="✦" HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="White" FontSize="17"/>
+          </Border>
+          <TextBlock Text=" CODEX EXTENSION FIXER" Margin="12,0,0,0"
+                     FontSize="11" FontWeight="SemiBold" Foreground="#C2D2F1"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Column="1">
+          <Button Content="—" Width="40" Height="31" Margin="0,0,6,0"
+                  Style="{StaticResource GlassButton}" Padding="4,0"
+                  Click="Minimize_Click" ToolTip="最小化"/>
+          <Button x:Name="MaximizeButton" Content="□" Width="40" Height="31" Margin="0,0,6,0"
+                  Style="{StaticResource GlassButton}" Padding="4,0"
+                  Click="Maximize_Click" ToolTip="最大化或还原"/>
+          <Button Content="✕" Width="40" Height="31"
+                  Style="{StaticResource GlassButton}" Padding="4,0"
+                  Click="Close_Click" ToolTip="关闭"/>
+        </StackPanel>
+      </Grid>
+
+      <Grid Grid.Row="1" Margin="0,8,0,18">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="让连接，重新顺畅。" FontSize="34"
+                     FontWeight="SemiBold" Foreground="White"/>
+          <TextBlock Text="Codex 浏览器扩展 · 运行时健康诊断与修复" Margin="2,10,0,0"
+                     FontSize="15" Foreground="#B6C9E8"/>
+        </StackPanel>
+        <Border Grid.Column="1" CornerRadius="21" Padding="20,12"
+                Background="#5C718BB0" BorderBrush="#B0DDEFFF"
+                BorderThickness="1" VerticalAlignment="Center">
+          <Border.Effect><DropShadowEffect Color="#131A3B" BlurRadius="18" ShadowDepth="5" Opacity=".5"/></Border.Effect>
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Ellipse x:Name="StatusDot" Width="9" Height="9" Fill="#8EF5CE"
+                     Margin="0,0,10,0"/>
+            <TextBlock x:Name="StatusText" Text="等待检测" FontWeight="SemiBold" FontSize="14"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Grid Grid.Row="2" Margin="0,0,0,16">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/><ColumnDefinition Width="16"/>
+          <ColumnDefinition Width="*"/><ColumnDefinition Width="16"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="0" Style="{StaticResource GlassCard}">
+          <StackPanel>
+            <TextBlock Text="CODEX 版本" FontSize="11" FontWeight="SemiBold"
+                       Foreground="#AFC3E4"/>
+            <TextBlock x:Name="VersionValue" Text="—" FontSize="20" FontWeight="SemiBold"
+                       TextTrimming="CharacterEllipsis" Margin="0,12,0,0"/>
+            <TextBlock Text="当前安装版本" FontSize="12" Foreground="#98ABCD" Margin="0,6,0,0"/>
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="2" Style="{StaticResource GlassCard}">
+          <StackPanel>
+            <TextBlock Text="NODE 运行时" FontSize="11" FontWeight="SemiBold"
+                       Foreground="#AFC3E4"/>
+            <TextBlock x:Name="RuntimeValue" Text="—" FontSize="18" FontWeight="SemiBold"
+                       TextTrimming="CharacterEllipsis" Margin="0,13,0,0"/>
+            <TextBlock Text="正式运行环境" FontSize="12" Foreground="#98ABCD" Margin="0,6,0,0"/>
+          </StackPanel>
+        </Border>
+        <Border Grid.Column="4" Style="{StaticResource GlassCard}">
+          <StackPanel>
+            <TextBlock Text="异常字段" FontSize="11" FontWeight="SemiBold"
+                       Foreground="#AFC3E4"/>
+            <TextBlock x:Name="IssuesValue" Text="—" FontSize="25" FontWeight="SemiBold"
+                       Margin="0,8,0,0"/>
+            <TextBlock Text="需要关注的路径字段" FontSize="12" Foreground="#98ABCD" Margin="0,2,0,0"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Grid Grid.Row="3">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="1.18*"/>
+          <ColumnDefinition Width="16"/>
+          <ColumnDefinition Width="0.82*"/>
+        </Grid.ColumnDefinitions>
+        <Border Grid.Column="0" Style="{StaticResource GlassCard}">
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="诊断概览" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock Grid.Row="1" Text="扫描浏览器连接清单及当前运行时"
+                       Foreground="#AABAD5" FontSize="12" Margin="0,9,0,17"/>
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+              <ItemsControl x:Name="DiagnosticsList">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border CornerRadius="12" Background="#425F7B9C"
+                            BorderBrush="#578DC8F2" BorderThickness="1"
+                            Margin="0,0,0,10" Padding="14,10">
+                      <TextBlock Text="{Binding}" TextWrapping="Wrap"
+                                 Foreground="#E8F1FF" FontSize="12"
+                                 LineHeight="19"/>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </Grid>
+        </Border>
+        <Border Grid.Column="2" Style="{StaticResource GlassCard}">
+          <StackPanel>
+            <TextBlock Text="快速操作" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock Text="安全检测 · 有确认的修复 · 可验证的恢复"
+                       FontSize="12" Foreground="#AABAD5" TextWrapping="Wrap"
+                       Margin="0,10,0,18"/>
+            <Button x:Name="ScanButton" Style="{StaticResource GlassButton}"
+                    Background="#B04C94F7" BorderBrush="#DBE9FBFF"
+                    Click="Scan_Click" Margin="0,0,0,10" Content="✧  立即检测"/>
+            <Button x:Name="RepairButton" Style="{StaticResource GlassButton}"
+                    Click="Repair_Click" IsEnabled="False" Margin="0,0,0,10"
+                    Content="✦  备份并修复"/>
+            <Button x:Name="RestoreButton" Style="{StaticResource GlassButton}"
+                    Click="Restore_Click" IsEnabled="False" Margin="0,0,0,10"
+                    Content="↺  恢复最近备份"/>
+            <Button x:Name="OpenBackupsButton" Style="{StaticResource GlassButton}"
+                    Click="OpenBackups_Click" Content="▣  打开备份目录"/>
+            <ProgressBar x:Name="BusyProgress" Height="3" Margin="0,16,0,0"
+                         IsIndeterminate="True" Visibility="Collapsed"
+                         Foreground="#9CBFFF" Background="#22446B9B"/>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <Grid Grid.Row="4" Margin="1,11,1,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="本地离线处理 · 修改前备份 · 不删除对话、插件、MCP 或登录数据"
+                   Foreground="#93AACA" FontSize="11" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Text="v1.0.0 · Liquid Glass · Native Windows"
+                   Foreground="#B6C9E8" FontSize="11" VerticalAlignment="Center"/>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

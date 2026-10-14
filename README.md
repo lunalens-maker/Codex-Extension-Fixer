@@ -25,7 +25,27 @@ Codex app-server manifest entry is missing required path nodePath
 - 📴 **离线工具**：无需管理员权限、无需安装 Python/Node/npm、不访问网络，也不上传任何文件。
 - 🧪 **自动化测试**：包含离线模拟安装环境测试和 GitHub Actions 工作流。
 
-## 下载 Windows EXE（v0.2.0 正式发布）
+## ✨ 原生液态玻璃版 v1.0.0
+
+**[⬇️ 下载 Codex-Extension-Fixer.exe（Windows x64）](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/download/v1.0.0/Codex-Extension-Fixer.exe)**
+
+[查看 v1.0.0 更新说明](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/tag/v1.0.0) · [下载 SHA-256 校验文件](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/download/v1.0.0/Codex-Extension-Fixer.exe.sha256)
+
+v1.0.0 改为 **C# / .NET 10 / WPF 原生 Windows 程序**，重新设计深色液态玻璃界面、光晕与按钮动效、支持窗口最大化/还原和高 DPI，并保留只读检测、备份确认、修复与受保护的恢复功能。单文件 EXE 自包含 .NET 运行时，不要求用户安装 SDK 或 Node.js。
+
+**使用顺序：** 下载 → 校验文件 → 双击 EXE →「立即检测」；仅在发现可修复项时，先退出 Codex 和 Chrome，再点击「备份并修复」。
+
+**验证说明：** 已通过 Windows CI 编译、模拟修复/恢复、EXE 打包及窗口进程启动测试。视觉精修尚未完成真实设备的逐项人工验收；真实受损 Codex 环境的 EXE 端到端修复仍未实测。未知配置格式会安全跳过，不会盲目写入。该工具非 OpenAI 或 Apple 官方产品，也未做代码签名。
+
+- 原生源码：[`native/CodexExtensionFixer/`](native/CodexExtensionFixer/)
+- 原生技术说明：[`native/README.md`](native/README.md)
+- 模拟测试：[`tests/NativeTests/`](tests/NativeTests/)
+
+---
+
+### 旧版 PowerShell / WinForms v0.2.0（保留作为回退）
+
+
 
 **[⬇️ 下载 Codex-Extension-Fixer.exe](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/download/v0.2.0/Codex-Extension-Fixer.exe)** · [完整 Release 说明](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/tag/v0.2.0) · [SHA-256 校验文件](https://github.com/lunalens-maker/Codex-Extension-Fixer/releases/download/v0.2.0/Codex-Extension-Fixer.exe.sha256)
 
@@ -43,7 +63,7 @@ Codex app-server manifest entry is missing required path nodePath
 
 `main` 分支推送后，GitHub Actions 会运行测试，并用 [PS2EXE](https://github.com/MScholtes/PS2EXE) 1.0.18 编译。开发预览版可在 [Build Windows EXE Actions](https://github.com/lunalens-maker/Codex-Extension-Fixer/actions/workflows/build-exe.yml) 的 Artifacts 下载；正式用户推荐使用上方 Release 附件。编译过程会安装 PS2EXE，生成的修复工具自身不联网或上传配置。
 
-## 快速使用（Windows 11 / Windows 10）
+## 旧版源码使用（Windows 11 / Windows 10）
 
 1. 从 GitHub 仓库右上角 **Code → Download ZIP** 获取源码，并解压整个文件夹。不要只下载一个 `.ps1` 文件。
 2. 双击 **`Start.cmd`**，打开工具界面。
@@ -55,7 +75,7 @@ Codex app-server manifest entry is missing required path nodePath
 
 > **注意**：如果检测不到完整正式运行时，工具不会从 `.staging-*` 临时文件夹随意拷贝 Node。请通过官方 Codex 客户端修复/完成更新，再检测。
 
-## 命令行用法（可选）
+## 旧版命令行用法（可选）
 
 在项目文件夹打开 PowerShell：
 
@@ -99,7 +119,7 @@ powershell.exe -NoProfile -File .\Fix-Codex.ps1 -Action Restore -Yes
 
 ```text
 Codex-Extension-Fixer/
-├── Start.cmd                       # PowerShell 版本双击启动
+├── native/CodexExtensionFixer/    # v1.0.0 WPF 原生程序\n├── Start.cmd                       # v0.2.0 PowerShell 版本双击启动
 ├── Codex-Fixer.ps1                   # WinForms 图形界面
 ├── Fix-Codex.ps1                   # 命令行
 ├── src/CodexFixer.Core.ps1         # 检测、备份、修复、恢复逻辑

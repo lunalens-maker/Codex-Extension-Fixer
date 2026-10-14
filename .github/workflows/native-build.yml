@@ -1,0 +1,72 @@
+name: Native liquid-glass Windows build
+
+on:
+  push:
+    branches:
+      - feature/native-liquid-glass-v1
+    paths:
+      - 'native/**'
+      - 'tests/NativeTests/**'
+      - '.github/workflows/native-build.yml'
+  pull_request:
+    paths:
+      - 'native/**'
+      - 'tests/NativeTests/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build native Windows app
+        shell: pwsh
+        run: dotnet build native/CodexExtensionFixer/CodexExtensionFixer.csproj --configuration Release
+      - name: Verify safe repair engine
+        shell: pwsh
+        run: dotnet run --project tests/NativeTests/NativeTests.csproj --configuration Release
+      - name: Publish self-contained Windows x64 EXE
+        shell: pwsh
+        run: dotnet publish native/CodexExtensionFixer/CodexExtensionFixer.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:EnableCompressionInSingleFile=true -o dist/native
+      - name: Validate EXE file
+        shell: pwsh
+        run: |
+          $file = 'dist/native/Codex-Extension-Fixer.exe'
+          if (!(Test-Path $file)) { throw 'Native EXE missing' }
+          $bytes = [IO.File]::ReadAllBytes((Resolve-Path $file))
+          if ($bytes.Length -lt 4096 -or $bytes[0] -ne 77 -or $bytes[1] -ne 90) { throw 'Invalid executable' }
+          Write-Host ('Native EXE: ' + (Get-Item $file).Length + ' bytes')
+          Get-FileHash $file -Algorithm SHA256
+      - name: Native GUI process startup smoke test
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = (Resolve-Path 'dist/native/Codex-Extension-Fixer.exe').Path
+          $process = Start-Process -FilePath $exe -PassThru
+          try {
+            Start-Sleep -Seconds 7
+            $process.Refresh()
+            if ($process.HasExited) {
+              throw "GUI exited unexpectedly, exit code $($process.ExitCode)"
+            }
+            Write-Host 'Native GUI process remained running after launch.'
+          }
+          finally {
+            $process.Refresh()
+            if (!$process.HasExited) {
+              Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
+            }
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Codex-Extension-Fixer-LiquidGlass-Win-x64
+          path: dist/native/Codex-Extension-Fixer.exe
+          if-no-files-found: error
+          retention-days: 30
