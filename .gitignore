@@ -1,0 +1,17 @@
+# Local diagnostics, backups and temporary files
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.bak
+*.bak-*
+*.tmp-*
+*.restore-*
+Backups/
+backup-info.json
+
+# Local editor / OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
